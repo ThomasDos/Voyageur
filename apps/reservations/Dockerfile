@@ -1,37 +1,37 @@
-FROM node:alpine As development
+FROM node:alpine AS development
 
-WORKDIR /usrc/src/app
+WORKDIR /usr/src/app
 
 COPY package.json ./
-
 COPY pnpm-lock.yaml ./
+COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
 
 RUN npm install -g pnpm
 
-RUN pnpm install
+COPY apps/reservations apps/reservations
+COPY libs libs
 
-COPY . .
+RUN pnpm install -r
 
-RUN pnpm run build
+RUN pnpm run build reservations
 
-FROM node:alpine As production
+FROM node:alpine AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /usrc/src/app
+WORKDIR /usr/src/app
 
 COPY package.json ./
-
 COPY pnpm-lock.yaml ./
 
 RUN npm install -g pnpm
 
-RUN pnpm install --prod
+RUN pnpm install --prod -r
 
-COPY --from=development /usrc/src/app/dist ./dist
+COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/apps/reservations/main.js"]
-
+CMD ["node", "dist/apps/reservations/main"]
 # docker build ../../ -f Dockerfile -t voyageur_reservations
 # docker run -p 3000:3000 voyageur_reservations
