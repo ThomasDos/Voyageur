@@ -17,6 +17,7 @@ import { ReservationsService } from './reservations.service';
       envFilePath: './apps/reservations/.env',
       validationSchema: Joi.object({
         DB_MONGODB_URI: Joi.string().required(),
+        PORT: Joi.number().required(),
       }),
     }),
     DatabaseModule,

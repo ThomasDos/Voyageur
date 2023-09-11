@@ -5,6 +5,7 @@ import { AuthModule } from './auth.module';
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  await app.listen(3001);
+
+  await app.listen(process.env.PORT);
 }
 bootstrap();
